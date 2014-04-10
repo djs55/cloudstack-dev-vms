@@ -20,6 +20,7 @@ service mysqld start
 
 yum install -y expect
 /vagrant/mysql_secure.sh
+mysql -u root < /vagrant/mysql_insecure.sql
 
 # set up the NFS exports for primary and secondary storage
 yum install -y parted
