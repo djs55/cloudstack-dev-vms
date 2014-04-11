@@ -12,8 +12,16 @@ bind-address = 0.0.0.0
 EOT
 cat /etc/my.cnf.orig | grep -v '\[mysqld\]' >> /etc/my.cnf
 
-iptables -F
-service iptables save
+yum install -y dnsmasq
+cp /vagrant/dnsmasq.conf /etc/
+echo "Domain = cloud.priv" >> /etc/idmapd.conf
+echo "192.168.100.10 srvr1.cloud.priv" >> /etc/hosts
+chkconfig dnsmasq on
+service dnsmasq start
+
+cp /vagrant/iptables.cs /etc/sysconfig/iptables
+service iptables restart
+sysctl -w net.ipv4.ip_forward=1
 
 chkconfig --level 345 mysqld on
 service mysqld start
