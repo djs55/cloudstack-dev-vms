@@ -27,16 +27,16 @@ yum install -y parted
 parted /dev/sdb mklabel msdos
 parted /dev/sdb mkpart primary 1 100%
 mkfs.ext2 /dev/sdb1
-mkdir /data
-echo `blkid /dev/sdb1 | awk '{print$2}' | sed -e 's/"//g'` /data   ext2   defaults   0   0 >> /etc/fstab
-mount /data
+mkdir /nfs
+echo `blkid /dev/sdb1 | awk '{print$2}' | sed -e 's/"//g'` /nfs   ext2   defaults   0   0 >> /etc/fstab
+mount /nfs
 
 # set up the primary and secondary storage over NFS
 yum install -y nfs-utils
-mkdir -p /data/primary
-mkdir -p /data/secondary
+mkdir -p /nfs/primary
+mkdir -p /nfs/secondary
 cat > /etc/exports <<EOT
-/data  *(rw,async,no_root_squash,no_subtree_check)
+/nfs  *(rw,async,no_root_squash,no_subtree_check)
 EOT
 exportfs -a
 service rpcbind start
