@@ -5,7 +5,8 @@ $script = <<SCRIPT
 echo I am provisioning...
 yum install -y git mercurial java-1.7.0-openjdk-devel.x86_64 python-setuptools rpm-build
 rpm -ivh http://mirror.ancl.hawaii.edu/linux/epel/6/i386/epel-release-6-8.noarch.rpm
-yum install -y mock
+yum install -y mock redhat-lsb-core
+groupmems -a vagrant -g mock
 SCRIPT
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
