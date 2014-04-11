@@ -1,0 +1,4 @@
+[xenserver-core]
+name=xenserver-core
+baseurl=http://dave.recoil.org/xenserver-core/el6/RPMS
+gpgcheck=0

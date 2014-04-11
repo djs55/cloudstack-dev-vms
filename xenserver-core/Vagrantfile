@@ -11,12 +11,7 @@ mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=testing-epel6&arch=x
 failovermethod=priority
 EOF
 echo I am provisioning...
-cat > /etc/yum.repos.d/xen.repo << EOF
-[xscore]
-name=xscore
-baseurl=file:///vagrant/RPMS
-gpgcheck=0
-EOF
+cp /vagrant/xenserver-core.repo /etc/yum.repos.d/
 cat > /etc/yum.repos.d/xen-c6.repo << EOF
 [xen-c6]
 name=xen-c6
