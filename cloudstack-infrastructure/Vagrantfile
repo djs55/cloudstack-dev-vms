@@ -54,9 +54,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #
   #   # Use VBoxManage to customize the VM. For example to change memory:
   #   vb.customize ["modifyvm", :id, "--memory", "1024"]
-    vb.customize ['createhd', '--filename', './tmp/large_disk.vdi', '--size', 500 * 1024]
-    vb.customize ['storagectl', :id, '--name', 'SATA controller', '--add', 'sata', '--controller', 'IntelAHCI' ]
-    vb.customize ['storageattach', :id, '--storagectl', 'SATA controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', './tmp/large_disk.vdi']
+    unless File.exist?('./tmp/large_disk.vdi')
+      vb.customize ['createhd', '--filename', './tmp/large_disk.vdi', '--size', 500 * 1024]
+      vb.customize ['storagectl', :id, '--name', 'SATA controller', '--add', 'sata', '--controller', 'IntelAHCI' ]
+      vb.customize ['storageattach', :id, '--storagectl', 'SATA controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', './tmp/large_disk.vdi']
+    end
   end
   #
   # View the documentation for the provider you're using for more
