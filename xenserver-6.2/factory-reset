@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# reset a xenserver to a clean state with unique local identifiers
+
+IFS=","; for vm in $(xe vm-list power-state=Running is-control-domain=false params=uuid --minimal); do
+  echo Shutting down $vm
+  xe vm-shutdown uuid=$vm --force
+done
+
+IFS=","; for pbd in $(xe pbd-list currently-attached=true params=uuid --minimal); do
+  echo Unplugging $pbd
+  xe pbd-unplug uuid=$pbd
+done
+
+service xapi stop
+rm -f /var/xapi/state* /var/xapi/local*
+service xcp-networkd stop
+rm -f /var/xapi/network*
+
+cat /etc/xensource-inventory | grep -v INSTALLATION_UUID | grep -v CONTROL_DOMAIN_UUID > /tmp/xensource-inventory
+echo "INSTALLATION_UUID='$(uuidgen)'" > /etc/xensource-inventory
+echo "CONTROL_DOMAIN_UUID='$(uuidgen)'" >> /etc/xensource-inventory
+cat /tmp/xensource-inventory >> /etc/xensource-inventory
+
+rm -f /etc/firstboot.d/state/30-prepare-networking
+xe-toolstack-restart
+service firstboot start
+/vagrant/setup-networking 
