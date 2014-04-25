@@ -46,8 +46,14 @@ mkdir -p /nfs/secondary
 cat > /etc/exports <<EOT
 /nfs  *(rw,async,no_root_squash,no_subtree_check)
 EOT
+
 exportfs -a
 service rpcbind start
 service nfs start
 chkconfig nfs on
 chkconfig rpcbind on
+
+# enable IP forwarding
+mkdir /etc/sysctl.d
+cp /vagrant/enable-ipv4-forwarding.conf /etc/sysctl.d/enable-ipv4-forwarding.conf
+sysctl -w net.ipv4.ip_forward=1
