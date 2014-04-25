@@ -13,6 +13,9 @@ service xcp-networkd stop
 service network stop
 service network start
 xe-toolstack-restart
+# not sure how to switch from vswitch to bridge without a reboot
+echo Please run 'vagrant up' to start the box
+halt
 SCRIPT
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
