@@ -59,6 +59,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       vb.customize ['storagectl', :id, '--name', 'SATA controller', '--add', 'sata', '--controller', 'IntelAHCI' ]
       vb.customize ['storageattach', :id, '--storagectl', 'SATA controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', './tmp/large_disk.vdi']
     end
+    vb.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
   end
   #
   # View the documentation for the provider you're using for more
