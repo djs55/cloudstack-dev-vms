@@ -1,0 +1,36 @@
+Vagrant.configure(2) do |config|
+    config.vm.box = "XenServer-2014-05-01"
+
+    config.vm.synced_folder ".", "/vagrant", type: "nfs"
+
+    # disable checking for vbguest versions as its not supported on xenserver
+    if Vagrant.has_plugin?("vagrant-vbguest")
+      config.vbguest.auto_update = false
+    end
+
+    config.vm.provision "shell", inline: $network_setup
+
+    config.vm.provider "virtualbox" do |v|
+      v.customize ["modifyvm", :id, "--memory", 4096]
+      v.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
+      #v.gui = true
+    end
+
+end
+
+$network_setup = <<END_NETWORK
+. /etc/xensource-inventory
+xe pif-scan host-uuid=${INSTALLATION_UUID}
+#PIF=$(xe pif-list device=eth0 params=uuid --minimal)
+#xe pif-reconfigure-ip uuid=${PIF} mode=dhcp
+#xe pif-plug uuid=${PIF}
+PIF=$(xe pif-list device=eth1 params=uuid --minimal)
+xe pif-reconfigure-ip uuid=${PIF} mode=static IP=172.17.10.13 netmask=255.255.255.0
+xe pif-plug uuid=${PIF}
+PIF=$(xe pif-list device=eth2 params=uuid --minimal)
+xe pif-reconfigure-ip uuid=${PIF} mode=static IP=192.168.100.13 netmask=255.255.255.0
+xe pif-plug uuid=${PIF}
+
+# Use one of the host-visible NICs as the management interface
+xe host-management-reconfigure pif-uuid=${PIF}
+END_NETWORK
